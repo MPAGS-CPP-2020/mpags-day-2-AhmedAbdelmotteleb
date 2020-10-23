@@ -1,3 +1,4 @@
+//==============================LIBRARIES==============================
 // Standard Library includes
 #include <iostream>
 #include <string>
@@ -6,6 +7,9 @@
 // For std::isalpha and std::isupper
 #include <cctype>
 
+
+//==============================FUNCTIONS==============================
+//==============================1ST FUNCTION
 std::string transformChar (const char inputChar) {
      
      std::string inputText {""};
@@ -56,25 +60,20 @@ std::string transformChar (const char inputChar) {
     return inputText;
 }
 
-// Main function of the mpags-cipher program
-int main(int argc, char* argv[])
-{
-  // Convert the command-line arguments into a more easily usable form
-  const std::vector<std::string> cmdLineArgs {argv, argv+argc};
-
-  // Add a typedef that assigns another name for the given type for clarity
+//==============================2ND FUNCTION
+bool processCommandLine(
+  const std::vector <std::string>& cmdLineArgs,
+  bool& helpRequested,
+  bool& versionRequested,
+  std::string& inputFile,
+  std::string& outputFile)
+  {
+ 
+ // Add a typedef that assigns another name for the given type for clarity
   typedef std::vector<std::string>::size_type size_type;
   const size_type nCmdLineArgs {cmdLineArgs.size()};
 
-  // Options that might be set by the command-line arguments
-  bool helpRequested {false};
-  bool versionRequested {false};
-  std::string inputFile {""};
-  std::string outputFile {""};
-
-  // Process command line arguments - ignore zeroth element, as we know this to
-  // be the program name and don't need to worry about it
-  for (size_type i {1}; i < nCmdLineArgs; ++i) {
+ for (size_type i {1}; i < nCmdLineArgs; ++i) {
 
     if (cmdLineArgs[i] == "-h" || cmdLineArgs[i] == "--help") {
       helpRequested = true;
@@ -88,7 +87,7 @@ int main(int argc, char* argv[])
       if (i == nCmdLineArgs-1) {
 	std::cerr << "[error] -i requires a filename argument" << std::endl;
 	// exit main with non-zero return to indicate failure
-	return 1;
+	return false;
       }
       else {
 	// Got filename, so assign value and advance past it
@@ -102,7 +101,7 @@ int main(int argc, char* argv[])
       if (i == nCmdLineArgs-1) {
 	std::cerr << "[error] -o requires a filename argument" << std::endl;
 	// exit main with non-zero return to indicate failure
-	return 1;
+	return false;
       }
       else {
 	// Got filename, so assign value and advance past it
@@ -114,10 +113,39 @@ int main(int argc, char* argv[])
       // Have an unknown flag to output error message and return non-zero
       // exit status to indicate failure
       std::cerr << "[error] unknown argument '" << cmdLineArgs[i] << "'\n";
-      return 1;
+      return false;
     }
   }
 
+  return true;
+  }
+
+
+//================================================================
+//==============================MAIN==============================
+//================================================================
+// Main function of the mpags-cipher program
+int main(int argc, char* argv[])
+{
+  // Convert the command-line arguments into a more easily usable form
+  const std::vector<std::string> cmdLineArgs {argv, argv+argc};
+
+  // Add a typedef that assigns another name for the given type for clarity
+  //typedef std::vector<std::string>::size_type size_type;
+  //const size_type nCmdLineArgs {cmdLineArgs.size()};
+
+  // Options that might be set by the command-line arguments
+  bool helpRequested {false};
+  bool versionRequested {false};
+  std::string inputFile {""};
+  std::string outputFile {""};
+
+  // Process command line arguments - ignore zeroth element, as we know this to
+  // be the program name and don't need to worry about it
+  bool processedOK{processCommandLine(cmdLineArgs,helpRequested,versionRequested,inputFile,outputFile)};
+  if(!processedOK){ 
+    return 1; 
+} 
   // Handle help, if requested
   if (helpRequested) {
     // Line splitting for readability
@@ -177,3 +205,6 @@ int main(int argc, char* argv[])
   // and for consistency with other functions
   return 0;
 }
+
+
+//END-----------------------------------------------
