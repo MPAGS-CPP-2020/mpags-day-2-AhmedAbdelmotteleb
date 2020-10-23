@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <cctype>
+#include <fstream>
 //==============================Header Files
 #include "MPAGSCipher/TransformChar.hpp"
 #include "MPAGSCipher/ProcessCommandLine.hpp"
@@ -20,7 +21,6 @@ int main(int argc, char* argv[])
   // Add a typedef that assigns another name for the given type for clarity
   //typedef std::vector<std::string>::size_type size_type;
   //const size_type nCmdLineArgs {cmdLineArgs.size()};
-
   // Options that might be set by the command-line arguments
   bool helpRequested {false};
   bool versionRequested {false};
@@ -30,14 +30,26 @@ int main(int argc, char* argv[])
   // Process command line arguments - ignore zeroth element, as we know this to
   // be the program name and don't need to worry about it
   bool processedOK{processCommandLine(cmdLineArgs,helpRequested,versionRequested,inputFile,outputFile)};
-  if(!processedOK){ 
-    return 1; 
-} 
+  if(!processedOK){ return 1; } 
+
+
+//==============================input file
+//std::string input{"input_file.txt"};
+std::ifstream in_file{inputFile};
+bool ok_to_read = in_file.good();
+if (!ok_to_read){return 1;}
+//==============================output file
+//std::string output{"output_file.txt"};
+std::ofstream out_file{outputFile};
+bool ok_to_write = out_file.good();
+if (!ok_to_write){return 1;}
+
+
   // Handle help, if requested
   if (helpRequested) {
     // Line splitting for readability
-    std::cout
-      << "Usage: mpags-cipher [-i <file>] [-o <file>]\n\n"
+    //std::cout
+      out_file << "Usage: mpags-cipher [-i <file>] [-o <file>]\n\n"
       << "Encrypts/Decrypts input alphanumeric text using classical ciphers\n\n"
       << "Available options:\n\n"
       << "  -h|--help        Print this help message and exit\n\n"
@@ -55,7 +67,8 @@ int main(int argc, char* argv[])
   // Like help, requires no further action,
   // so return from main with zero to indicate success
   if (versionRequested) {
-    std::cout << "0.1.0" << std::endl;
+    //std::cout 
+    out_file << "0.1.0" << std::endl;
     return 0;
   }
 
@@ -66,14 +79,15 @@ int main(int argc, char* argv[])
   // Read in user input from stdin/file
   // Warn that input file option not yet implemented
   if (!inputFile.empty()) {
-    std::cout << "[warning] input from file ('"
+    //std::cout 
+     out_file << "[warning] input from file ('"
               << inputFile
               << "') not implemented yet, using stdin\n";
   }
 
   // Loop over each character from user input
   // (until Return then CTRL-D (EOF) pressed)
-  while(std::cin >> inputChar)
+  while(in_file>>inputChar) //std::cin >> inputChar
   {
     inputText+=transformChar(inputChar);
   }
@@ -81,7 +95,8 @@ int main(int argc, char* argv[])
   // Output the transliterated text
   // Warn that output file option not yet implemented
   if (!outputFile.empty()) {
-    std::cout << "[warning] output to file ('"
+    //std::cout 
+     out_file << "[warning] output to file ('"
               << outputFile
               << "') not implemented yet, using stdout\n";
   }
@@ -92,6 +107,5 @@ int main(int argc, char* argv[])
   // and for consistency with other functions
   return 0;
 }
-
 
 //END-----------------------------------------------
