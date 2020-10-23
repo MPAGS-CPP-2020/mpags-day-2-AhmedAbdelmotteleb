@@ -101,7 +101,8 @@ if (!ok_to_write){return 1;}
               << "') not implemented yet, using stdout\n";
   }
 
-  std::cout << inputText << std::endl;
+  //std::cout 
+  out_file<< inputText << std::endl;
 
   // No requirement to return from main, but we do so for clarity
   // and for consistency with other functions
