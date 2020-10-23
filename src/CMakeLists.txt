@@ -14,6 +14,10 @@ mpags-cipher.cpp
 MPAGSCipher/TransformChar.cpp
 )
 
+target_include_directories(mpags-cipher
+    PRIVATE MPAGSCipher
+)
+
 #-Use our standard set of flags
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wfatal-errors -Wshadow -pedantic")
 

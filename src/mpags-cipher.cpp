@@ -6,11 +6,11 @@
 
 // For std::isalpha and std::isupper
 #include <cctype>
-
+#include "MPAGSCipher/TransformChar.hpp"
 
 //==============================FUNCTIONS==============================
 //==============================Declaring 1st FUNCTION (found after main)
-std::string transformChar(const char inputChar);
+
 //==============================2ND FUNCTION
 bool processCommandLine(
   const std::vector <std::string>& cmdLineArgs,
