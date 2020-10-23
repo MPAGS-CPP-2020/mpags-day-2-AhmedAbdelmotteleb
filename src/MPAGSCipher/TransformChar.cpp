@@ -2,7 +2,6 @@
 #include <string>
 #include "TransformChar.hpp"
 
-//==============================1ST FUNCTION
 std::string transformChar (const char inputChar) {
      
      std::string inputText {""};
