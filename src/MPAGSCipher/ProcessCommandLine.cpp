@@ -1,12 +1,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "ProcessCommandLine.hpp"
 
 bool processCommandLine(
   const std::vector <std::string>& cmdLineArgs,
   bool& helpRequested,
   bool& versionRequested,
+  bool& encrypt,
+  bool& decrypt,
+  size_t& key,
   std::string& inputFile,
   std::string& outputFile)
   {
@@ -22,6 +26,31 @@ bool processCommandLine(
     }
     else if (cmdLineArgs[i] == "--version") {
       versionRequested = true;
+    }
+    else if (cmdLineArgs[i] == "-e") {
+      encrypt = true;
+    }
+    else if (cmdLineArgs[i] == "-d") {
+      decrypt = true;
+    }
+    else if (cmdLineArgs[i] == "-k") {
+      if (encrypt || decrypt){
+        if (i == nCmdLineArgs-1) {
+	        std::cerr << "[error] -k requires a key number argument" << std::endl;
+	        // exit main with non-zero return to indicate failure
+        	return false;
+      }
+        else {
+	// Got key, so assign value and advance past it
+	        key = stoul(cmdLineArgs[i+1], nullptr, 0); 
+          //converting from string to unsigned long value
+      	  ++i;
+      }
+     // key.erase(std::remove_if(key.begin(), key.end(),[](char c) { return !std::isdigit(c); }),key.end());
+    }
+      else{
+        std::cerr << "[error] -k requires you to have chosen encrypt ('-e') or decrypt ('-d') options first." << std::endl;
+      }
     }
     else if (cmdLineArgs[i] == "-i") {
       // Handle input file option

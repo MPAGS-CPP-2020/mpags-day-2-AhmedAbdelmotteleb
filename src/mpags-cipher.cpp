@@ -7,6 +7,7 @@
 //==============================Header Files
 #include "MPAGSCipher/TransformChar.hpp"
 #include "MPAGSCipher/ProcessCommandLine.hpp"
+#include "MPAGSCipher/RunCaesarCipher.hpp"
 
 
 //================================================================
@@ -24,12 +25,15 @@ int main(int argc, char* argv[])
   // Options that might be set by the command-line arguments
   bool helpRequested {false};
   bool versionRequested {false};
+  bool encrypt {false};
+  bool decrypt {false};
+  size_t key{};
   std::string inputFile {""};
   std::string outputFile {""};
 
   // Process command line arguments - ignore zeroth element, as we know this to
   // be the program name and don't need to worry about it
-  bool processedOK{processCommandLine(cmdLineArgs,helpRequested,versionRequested,inputFile,outputFile)};
+  bool processedOK{processCommandLine(cmdLineArgs,helpRequested,versionRequested, encrypt, decrypt, key, inputFile,outputFile)};
   if(!processedOK){ return 1; } 
 
 
@@ -48,7 +52,15 @@ if (!ok_to_write){return 1;}
   // Handle help, if requested
   if (helpRequested) {
     // Line splitting for readability
-    //std::cout
+    std::cout << "Usage: mpags-cipher [-i <file>] [-o <file>]\n\n"
+      << "Encrypts/Decrypts input alphanumeric text using classical ciphers\n\n"
+      << "Available options:\n\n"
+      << "  -h|--help        Print this help message and exit\n\n"
+      << "  --version        Print version information\n\n"
+      << "  -i FILE          Read text to be processed from FILE\n"
+      << "                   Stdin will be used if not supplied\n\n"
+      << "  -o FILE          Write processed text to FILE\n"
+      << "                   Stdout will be used if not supplied\n\n";
       out_file << "Usage: mpags-cipher [-i <file>] [-o <file>]\n\n"
       << "Encrypts/Decrypts input alphanumeric text using classical ciphers\n\n"
       << "Available options:\n\n"
@@ -67,10 +79,11 @@ if (!ok_to_write){return 1;}
   // Like help, requires no further action,
   // so return from main with zero to indicate success
   if (versionRequested) {
-    //std::cout 
+    std::cout << "0.1.0" << std::endl;
     out_file << "0.1.0" << std::endl;
     return 0;
   }
+
 
   // Initialise variables for processing input text
   char inputChar {'x'};
@@ -79,8 +92,7 @@ if (!ok_to_write){return 1;}
   // Read in user input from stdin/file
   // Warn that input file option not yet implemented
   if (!inputFile.empty()) {
-    //std::cout 
-     out_file << "[warning] input from file ('"
+    std::cout << "[warning] input from file ('"
               << inputFile
               << "') not implemented yet, using stdin\n";
   }
@@ -92,11 +104,23 @@ if (!ok_to_write){return 1;}
     inputText+=transformChar(inputChar);
   }
 
+//encryption and decryption
+ if (encrypt){
+    out_file << inputText<< " encrypted to " <<runCaesarCipher(inputText,key,encrypt) << " with key " << key;
+  }
+
+
+if (decrypt){
+  encrypt=false;
+  out_file << inputText<< " decrypted to " <<runCaesarCipher(inputText,key,encrypt) << " with key " << key;
+  }
+
+
+
   // Output the transliterated text
   // Warn that output file option not yet implemented
   if (!outputFile.empty()) {
-    //std::cout 
-     out_file << "[warning] output to file ('"
+    std::cout  << "[warning] output to file ('"
               << outputFile
               << "') not implemented yet, using stdout\n";
   }
